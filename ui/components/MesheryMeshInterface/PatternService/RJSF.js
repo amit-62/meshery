@@ -7,24 +7,32 @@ import { rjsfTheme } from "../../../themes";
 import { recursiveCleanObject } from "../helpers";
 import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
-// import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
+import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
 import { customizeValidator } from "@rjsf/validator-ajv6";
-import CustomInputField from "./RJSFCustomComponents/CustomInputField";
 import _ from "lodash"
+import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
+import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
+import ObjectFieldWithErrors from './RJSFCustomComponents/CustomObjectField';
 
+/*eslint-disable */
 class RJSFOverridenComponent extends Form {
   constructor(props){
-    super(props)
-    let oldValidate = this.validate;
-    this.validate = (
-      formData,
-      schema,
-    ) => {
-      let fixedFormData = recursiveCleanObject(_.cloneDeep(formData));
-      return oldValidate.call(this, fixedFormData, schema);
+    try {
+      super(props)
+      let oldValidate = this.validate;
+      this.validate = (
+        formData,
+        schema,
+      ) => {
+        let fixedFormData = recursiveCleanObject(_.cloneDeep(formData));
+        return oldValidate.call(this, fixedFormData, schema);
+      }
+    } catch (e) {
+      console.error("An RJSF error occurred", e)
     }
   }
 }
+/*eslint-enable */
 
 // This is Patched change to include customised Forms
 const MuiRJSFForm = withTheme(MaterialUITheme, RJSFOverridenComponent);
@@ -48,7 +56,7 @@ function RJSFForm(props) {
     isLoading,
     ArrayFieldTemplate = MesheryArrayFieldTemplate,
     ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
-    // WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
+    WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
     LoadingComponent,
     ErrorList,
     // prop should be present in order for the cloned element to override this property
@@ -57,7 +65,7 @@ function RJSFForm(props) {
   const templates={
     ArrayFieldTemplate,
     ObjectFieldTemplate,
-    // WrapIfAdditionalTemplate, // todo: enable it with some fixes
+    WrapIfAdditionalTemplate,
   }
 
   useEffect(() => {
@@ -72,6 +80,7 @@ function RJSFForm(props) {
     return <LoadingComponent />
   }
 
+
   return (
     <MuiThemeProvider theme={rjsfTheme}>
       <MuiRJSFForm
@@ -82,8 +91,13 @@ function RJSFForm(props) {
         validator={validator}
         templates={templates}
         uiSchema={schema.uiSchema}
+        fields={{ ObjectField : ObjectFieldWithErrors }}
         widgets={{
-          TextWidget : CustomInputField
+          TextWidget : CustomTextWidget,
+          // Custom components to be added here
+          DateTimeWidget : CustomDateTimeWidget,
+          // SelectWidget: CustomSelectWidget,
+          // CheckboxWidget: CustomBooleanWidget,
         }}
         liveValidate
         showErrorList={false}

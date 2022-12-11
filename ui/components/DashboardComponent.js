@@ -6,9 +6,10 @@ import {
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
-import AddIcon from "@material-ui/icons/AddCircleOutline";
+// import AddIcon from "@material-ui/icons/AddCircleOutline";
+import AddIconCircleBorder from "../assets/icons/AddIconCircleBorder";
+import SettingsIcon from "../assets/icons/SettingsIcon";
 import CloseIcon from "@material-ui/icons/Close";
-import SettingsIcon from "@material-ui/icons/Settings";
 import { withRouter } from "next/router";
 import { withSnackbar } from "notistack";
 import PropTypes from "prop-types";
@@ -29,6 +30,7 @@ import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
 import { submitPrometheusConfigure } from "./PrometheusComponent";
 import MUIDataTable from "mui-datatables";
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import Popup from "./Popup";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : "#eaeff1", },
@@ -63,7 +65,7 @@ const styles = (theme) => ({
   icon : { width : theme.spacing(2.5), },
   istioIcon : { width : theme.spacing(1.5), },
   settingsIcon : {
-    width : theme.spacing(2.5),
+    width : theme.spacing(2.2),
     paddingRight : theme.spacing(0.5),
   },
   addIcon : {
@@ -1305,7 +1307,7 @@ class DashboardComponent extends React.Component {
                 size="large"
                 onClick={() => self.props.router.push("/management")}
               >
-                <AddIcon className={classes.addIcon} />
+                <AddIconCircleBorder className={classes.addIcon} />
                 Install Service Mesh
               </Button>
             </div>
@@ -1338,7 +1340,7 @@ class DashboardComponent extends React.Component {
                 size="large"
                 onClick={() => self.props.router.push("/settings")}
               >
-                <AddIcon className={classes.addIcon} />
+                <AddIconCircleBorder className={classes.addIcon} />
                 Connect Cluster
               </Button>
             </div>
@@ -1347,6 +1349,7 @@ class DashboardComponent extends React.Component {
     );
     return (
       <NoSsr>
+        <Popup />
         <div className={classes.rootClass}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
